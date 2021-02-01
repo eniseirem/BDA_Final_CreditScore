@@ -16,3 +16,7 @@ plt.hist([train_cred, test_cred], bins= 100, range=[400,900], alpha=0.5, label=[
 plt.legend(loc='upper right')
 #show it
 plt.show()
+
+data = prep.data
+data.groupby(["CRED"])["CRED"].count().plot(kind="bar")
+plt.show()
