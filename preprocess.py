@@ -132,6 +132,7 @@ print(counter)
 from imblearn.under_sampling import NearMiss
 undersample = NearMiss(version=1, n_neighbors=4)
 #undersample = CondensedNearestNeighbour(n_neighbors=1)# transform the dataset
+#undersample = NearMiss(version=3, n_neighbors=4)
 X1, y1 = undersample.fit_resample(X1, y1)
 counter = Counter(y1)
 print("hi")
@@ -141,19 +142,29 @@ print("end")
 X_train2, X_test2, y_train2, y_test2 = train_test_split(X1, y1, test_size=0.3, random_state=42)
 
 #%%%%
+from sklearn.preprocessing import LabelEncoder
+cols_to_remove = []
 
-
-
-X2 = data.drop(columns=["CRED"],axis=1)
-X2 = preprocessing.OneHotEncoder().fit_transform(X2)
+for col in data.columns:
+    try:
+        _ = data[col].astype(float)
+    except ValueError:
+        print('Couldn\'t covert %s to float' % col)
+        cols_to_remove.append(col)
+        pass
+data = data[[col for col in data.columns if col not in cols_to_remove]]
+X2 = data.drop(columns=["CRED","cuscode"],axis=1)
+print(X2.info)
 y2= data["CRED"].values
 counter = Counter(y2)
 print(counter)
 from imblearn.under_sampling import NearMiss
-undersample = NearMiss(version=3, n_neighbors=4)
 # transform the dataset
-X2, y2 = undersample.fit_resample(X2, y2)
 # summarize the new class distribution
+undersample = NearMiss(version=3, n_neighbors=4)
+X2, y2 = undersample.fit_resample(X2, y2)
 counter = Counter(y2)
 print(counter)
+
 X_train3, X_test3, y_train3, y_test3 = train_test_split(X2, y2, test_size=0.3, random_state=42)
+#%%%%
